@@ -158,8 +158,10 @@ function utf8_cut_substr($sourcestr, $cutlength, $symbol = '') {
     return $returnstr;
 }
 
+## <a name="utf8_strlen"></a>计算中文字符串长度 仅限utf-8
+```php
 /*
- * <a name="utf8_strlen">计算中文字符串长度 仅限utf-8</a>
+ * 计算中文字符串长度 仅限utf-8
  * @param string $string 字符串
  * @return num
  */

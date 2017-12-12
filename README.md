@@ -157,6 +157,7 @@ function utf8_cut_substr($sourcestr, $cutlength, $symbol = '') {
     }
     return $returnstr;
 }
+```
 
 ## <a name="utf8_strlen"></a>计算中文字符串长度 仅限utf-8
 ```php
@@ -173,7 +174,7 @@ function utf8_strlen($string = '') {
 }
 ```
 
-
+## <a name="p"></a>测试数据
 ```php
 /*
  * 测试数据 格式化输出多个数据 y: 断点输出；n: 不断点输出

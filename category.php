@@ -7,7 +7,7 @@ class Category{
 	 * 组合一维数组，用于输出顶级栏目所属的二级栏目
 	 * 如果父组id(f_id)等于0(即最高级)
 	 */
-	Static Public function infiniteForLevel($m, $html='--', $f_id=0, $level=0){
+	static public function infiniteForLevel($m, $html='--', $f_id=0, $level=0){
 		$arr = array();
 		foreach ($m as $v)
 		{
@@ -26,7 +26,7 @@ class Category{
 	/**
 	 * 多维数组，用于在前台输出含有二级栏目的导航条
 	 */
-	Static Public function infiniteForLayer ($m, $name = 'child', $f_id = 0) {
+    static public function infiniteForLayer ($m, $name = 'child', $f_id = 0) {
 		$arr = array();
 		foreach ($m as $v) {
 			if ($v['f_id'] == $f_id) {
@@ -40,7 +40,7 @@ class Category{
 	/**
 	 * 传递一个子分类ID返回所有的父级分类
 	 */
-	Static Public function getParents ($m, $id) {
+    static public function getParents ($m, $id) {
 		$arr = array();
 		foreach ($m as $v) {
 			if ($v['id'] == $id) {
@@ -54,7 +54,7 @@ class Category{
 	/**
 	 * 传递一个父级分类ID返回所有子分类
 	 */
-	Static Public function getChilds ($m, $f_id) {
+    static public function getChilds ($m, $f_id) {
 		$arr = array();
 		foreach ($m as $v) {
 			if ($v['f_id'] == $f_id) {

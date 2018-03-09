@@ -4,6 +4,7 @@
 
 ### 目录
 
+* [计算两个时间点的间隔: 返回x天x时x分x秒](#time_interval)
 * [随机抽取若干个元素](#get_rand_data)
 * [判断是客户端是android还是ios](#get_device_type)
 * [导出csv](#export_csv)
@@ -15,6 +16,29 @@
 * [可逆数据加密](#encrypt)
 * [可逆数据解密](#decrypt)
 * [格式化输出多个数据](#p)
+
+## <a name="time_interval"></a>计算两个时间的间隔
+```php
+/*
+ * 计算两个时间的间隔
+ * @params str $begin_time 开始时间(时间戳)
+ * @params str $end_time 结束时间(时间戳)
+ * @return str
+ */
+function time_interval($begin_time = '', $end_time = '') {
+	date_default_timezone_set('PRC'); //设置中国时区
+	$begin_time = empty($begin_time) ? strtotime('2018-3-7 23:17:10') : $begin_time;
+	$time = empty($end_time) ? time() : $end_time;
+	$msg = '<br>开始时间: ' . date('Y-m-d H:i:s', $begin_time);
+	$msg .= '<br>现在时间: ' . date('Y-m-d H:i:s', $time);
+	$day = floor(($time - $begin_time)/86400);
+	$hour = floor(($time - $begin_time)%86400/3600);
+	$minute = floor(($time - $begin_time)%86400%3600/60);
+	$second = floor(($time - $begin_time)%86400%60);
+	$msg .= '<br>距今: ' . $day . '天 ' . $hour . '时 ' . $minute . '分 ' . $second . '秒';
+	return $msg;
+}
+```
 
 ## <a name="get_rand_data"></a>随机抽取若干个元素
 ```php

@@ -1,9 +1,12 @@
 # 个人长期收集整理的PHP方法
-#### 更新日期：2017年-12月-12日
-### 个人的能力是有限的，如里面有错的望请大侠指出更正。QQ：791745828,或者Email：wherein777@163.com我。
+#### 更新日期：2018年-8月-9日
+### 个人的能力是有限的，如里面有错的望请大侠指出更正。QQ：791745828,或者Email：wherein777@163.com。
 
 ### 目录
 
+* [获取中文词的拼音字母](#get_initial)
+* [根据IP获取所在地信息](#get_info_by_ip)
+* [获取IP地址](#get_ip)
 * [计算两个时间点的间隔: 返回x天x时x分x秒](#time_interval)
 * [随机抽取若干个元素](#get_rand_data)
 * [判断是客户端是android还是ios](#get_device_type)
@@ -16,6 +19,158 @@
 * [可逆数据加密](#encrypt)
 * [可逆数据解密](#decrypt)
 * [格式化输出多个数据](#p)
+
+
+## <a name="get_initial"></a>获取中文词的拼音字母
+```php
+/*
+ * 获取中文词的拼音首字母
+ * @params string $str 字符串
+ * @params bool $multi 是否获取所有中文词的首字母
+ * @params bool $strtoupper 是否转化为小写, 默认大写
+ * @return str
+ * By Wherein
+ */
+function get_first_initial($str, $multi = false, $strtoupper = true) {
+    if (empty($str)) {
+        return '';
+    }
+    $fchar = ord($str{0});
+    if ($fchar >= ord('A') && $fchar <= ord('z'))
+        return strtoupper($str{0});
+    $s1 = iconv('UTF-8', 'gb2312', $str);
+    $s2 = iconv('gb2312', 'UTF-8', $s1);
+
+    $s = ($s2 == $str) ? $s1 : $str;
+    $ret = '';
+    if ($multi) {
+        $length = strlen($s);
+        for ($i = 0; $i < $length; $i++) {
+            $ms1 = substr($s, $i, 1);
+            $p = ord($ms1);
+            if ($p > 160) {
+                $ms2 = substr($s, $i++, 2);
+                $asc = ord($ms2{0}) * 256 + ord($ms2{1}) - 65536;
+                $ret .= get_switch_initial($asc);
+            } else {
+                $ret .= $ms1;
+            }
+        }
+    } else {
+        $asc = ord($s{0}) * 256 + ord($s{1}) - 65536;
+        $ret = get_switch_initial($asc);
+    }
+
+    return ($strtoupper == false ? strtolower($ret) : $ret);
+}
+
+/*
+ * 字符转化为对应字母
+ * By Wherein
+ */
+function get_switch_initial($asc) {
+    if ($asc >= -20319 && $asc <= -20284)
+        return 'A';
+    if ($asc >= -20283 && $asc <= -19776)
+        return 'B';
+    if ($asc >= -19775 && $asc <= -19219)
+        return 'C';
+    if ($asc >= -19218 && $asc <= -18711)
+        return 'D';
+    if ($asc >= -18710 && $asc <= -18527)
+        return 'E';
+    if ($asc >= -18526 && $asc <= -18240)
+        return 'F';
+    if ($asc >= -18239 && $asc <= -17923)
+        return 'G';
+    if ($asc >= -17922 && $asc <= -17418)
+        return 'H';
+    if ($asc >= -17417 && $asc <= -16475)
+        return 'J';
+    if ($asc >= -16474 && $asc <= -16213)
+        return 'K';
+    if ($asc >= -16212 && $asc <= -15641)
+        return 'L';
+    if ($asc >= -15640 && $asc <= -15166)
+        return 'M';
+    if ($asc >= -15165 && $asc <= -14923)
+        return 'N';
+    if ($asc >= -14922 && $asc <= -14915)
+        return 'O';
+    if ($asc >= -14914 && $asc <= -14631)
+        return 'P';
+    if ($asc >= -14630 && $asc <= -14150)
+        return 'Q';
+    if ($asc >= -14149 && $asc <= -14091)
+        return 'R';
+    if ($asc >= -14090 && $asc <= -13319)
+        return 'S';
+    if ($asc >= -13318 && $asc <= -12839)
+        return 'T';
+    if ($asc >= -12838 && $asc <= -12557)
+        return 'W';
+    if ($asc >= -12556 && $asc <= -11848)
+        return 'X';
+    if ($asc >= -11847 && $asc <= -11056)
+        return 'Y';
+    if ($asc >= -11055 && $asc <= -10247)
+        return 'Z';
+    return '';
+}
+```
+
+## <a name="get_info_by_ip"></a>根据IP获取所在地信息
+```php
+/*
+ * 根据ip获取城市
+ * @params str $ip ip地址
+ * @return str
+ */
+if (!function_exists('getCity')) {
+    function getCity($ip = '', $param = '') {
+		if (empty($ip)) {
+			return '';
+		}
+        $url = "http://ip.taobao.com/service/getIpInfo.php?ip=" . $ip;
+        $ip = json_decode(file_get_contents($url));
+        if ((string)$ip->code == '1') {
+            return false;
+        }
+        $data = (array)$ip->data;
+        $res = empty($param) ? $data : $data[$param];
+        return $res;
+    }
+}
+```
+
+## <a name="get_ip"></a>获取IP地址
+```php
+/*
+ * 获取IP地址
+ * @return str
+ */
+function getIP() {
+    static $realip;
+    if (isset($_SERVER)){
+        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])){
+            $realip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        } else if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+            $realip = $_SERVER["HTTP_CLIENT_IP"];
+        } else {
+            $realip = $_SERVER["REMOTE_ADDR"];
+        }
+    } else {
+        if (getenv("HTTP_X_FORWARDED_FOR")){
+            $realip = getenv("HTTP_X_FORWARDED_FOR");
+        } else if (getenv("HTTP_CLIENT_IP")) {
+            $realip = getenv("HTTP_CLIENT_IP");
+        } else {
+            $realip = getenv("REMOTE_ADDR");
+        }
+    }
+    return $realip;
+}
+```
 
 ## <a name="time_interval"></a>计算两个时间的间隔
 ```php
